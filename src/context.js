@@ -10,7 +10,7 @@ class ProductProvider extends Component {
     state ={
         products:[], 
         detailProduct:detailProduct,
-        cart: storeProducts,
+        cart: [],
         modalOpen:false,
         modalProduct: detailProduct,
         cartSubtotal: 0,
@@ -50,11 +50,13 @@ class ProductProvider extends Component {
         product.inCart = true;
         product.count = 1;
         const price = product.price;
-        product.totale = price;
+        product.total = price;
         this.setState(()=>{
             return{products:tempProducts, cart:[...this.state.cart, product]};
-
-        },);
+        },
+        ()=>{
+            this.addTotals();
+        });
     };
     openModal = id =>{
         const product = this.getItem(id);
@@ -79,6 +81,20 @@ class ProductProvider extends Component {
     clearCart = ()=>{
         console.log("cart is cleared")
     }
+    addTotals = ()=>{
+        let subTotal = 0;
+        this.state.cart.map(item =>(subTotal += item.total));
+        const tempTax = subTotal * 0.2;
+        const tax = parseFloat(tempTax.toFixed(2));
+        const total = subTotal + tax;
+        this.setState(()=>{
+            return {
+                cartSubtotal: subTotal,
+                cartTax: tax,
+                cartTotal: total
+            };
+        });
+    };
 
     render() {
         return (
